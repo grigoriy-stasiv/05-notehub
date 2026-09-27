@@ -6,14 +6,7 @@ export interface Note {
   content: string;
   tag: NoteTag;
   createdAt: string;
-}
-
-export interface FetchNotesResponse {
-  notes: Note[];
-  total: number;
-  page: number;
-  perPage: number;
-  totalPages: number;
+  updatedAt: string;
 }
 
 export interface CreateNoteInput {

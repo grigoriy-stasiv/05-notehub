@@ -1,19 +1,30 @@
 import React, { useEffect } from 'react';
+import type { ReactNode } from 'react'; 
 import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
 
 interface IModalProps {
   onClose: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const modalRoot = document.querySelector('#modal-root') || document.body;
 
 const Modal: React.FC<IModalProps> = ({ onClose, children }) => {
+  
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []); 
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Escape') onClose();
     };
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);

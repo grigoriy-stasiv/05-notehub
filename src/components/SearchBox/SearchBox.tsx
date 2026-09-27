@@ -1,12 +1,13 @@
 import React from 'react';
+import type { ChangeEvent } from 'react';
 import css from './SearchBox.module.css';
 
-interface ISearchBoxProps {
+interface SearchBoxProps { 
   onChange: (value: string) => void;
 }
 
-const SearchBox: React.FC<ISearchBoxProps> = ({ onChange }) => {
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+const SearchBox: React.FC<SearchBoxProps> = ({ onChange }) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   };
 

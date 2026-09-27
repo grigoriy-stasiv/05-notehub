@@ -1,11 +1,12 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createNote } from '../../services/noteService';
 import type { CreateNoteInput, NoteTag } from '../../types/note';
 import css from './NoteForm.module.css';
 
 interface INoteFormProps {
-  onSubmit: (values: CreateNoteInput) => void;
   onCancel: () => void;
 }
 
@@ -28,17 +29,35 @@ const initialValues: CreateNoteInput = {
   tag: 'Todo',
 };
 
-const NoteForm: React.FC<INoteFormProps> = ({ onSubmit, onCancel }) => {
+export const NoteForm: React.FC<INoteFormProps> = ({ onCancel }) => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      onCancel();
+    },
+    onError: (error) => {
+      console.error('Error creating note:', error);
+    },
+  });
+
+  const handleSubmit = (values: CreateNoteInput, { resetForm }: { resetForm: () => void }) => {
+    mutate(values, {
+      onSuccess: () => {
+        resetForm();
+      },
+    });
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values, { resetForm }) => {
-        onSubmit(values);
-        resetForm();
-      }}
+      onSubmit={handleSubmit}
     >
-      {({ isSubmitting }) => (
+      {() => (
         <Form className={css.form}>
           <div className={css.formGroup}>
             <label htmlFor="title">Title</label>
@@ -68,8 +87,9 @@ const NoteForm: React.FC<INoteFormProps> = ({ onSubmit, onCancel }) => {
             <button type="button" className={css.cancelButton} onClick={onCancel}>
               Cancel
             </button>
-            <button type="submit" className={css.submitButton} disabled={isSubmitting}>
-              Create note
+            {}
+            <button type="submit" className={css.submitButton} disabled={isPending}>
+              {isPending ? 'Creating...' : 'Create note'}
             </button>
           </div>
         </Form>
@@ -77,5 +97,6 @@ const NoteForm: React.FC<INoteFormProps> = ({ onSubmit, onCancel }) => {
     </Formik>
   );
 };
+
 
 export default NoteForm;
