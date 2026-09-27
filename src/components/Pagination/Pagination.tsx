@@ -6,7 +6,7 @@ import css from './Pagination.module.css';
 
 type ModuleWithDefault<T> = { default: T };
 
-const PaginateComponent = (
+const ReactPaginate = (
   ReactPaginateModule as unknown as ModuleWithDefault<
     ComponentType<ReactPaginateProps>
   >
@@ -28,7 +28,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <PaginateComponent
+    <ReactPaginate
       previousLabel={'<'}
       nextLabel={'>'}
       breakLabel={'...'}
